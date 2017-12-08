@@ -5,11 +5,8 @@ from scrapy.spiders import Spider
 from scrapy.selector import Selector
 from scrapy.http import Request
 import scrapy
-
-
 from ..items import PrincesmallItem
-import codecs
-import json
+
 
 
 # 获取princesmall的所有title，link，time
