@@ -9,6 +9,7 @@ from ..items import PrincesmallItem
 
 
 
+
 # 获取princesmall的所有title，link，time
 class princesmallSpider(Spider):
     name = "princesmall"
@@ -44,8 +45,8 @@ class princesmallSpider(Spider):
         #
         # yield item
 
-        print
-        item, '------'
+        # print
+        # item, '------'
         urls = sel.xpath('//nav[@class="pagination"]/a[@class="extend next"]/@href').extract()
         for url in urls:
             url = "http://princesmall.cn" + url
