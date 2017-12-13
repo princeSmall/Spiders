@@ -1,6 +1,6 @@
 # Spiders
 使用scrapy的spiders进行多网页爬取保存到本地
-
+![mysql](./image/mysql.png)
 
 ### Princesmall.py中 导入头文件
 注意：..items
@@ -90,7 +90,7 @@
 
         return items
 
-### pipelines.PY
+### pipelines.py
 
 注意：保存到本地，text，json，xml...有时候用ensure_ascii = False.有时候要用decode("unicode_escape").初学者还没分清区别
         
@@ -125,3 +125,56 @@
          time = Field()
 
          pass
+
+### 下载MySQL
+Mac ：
+
+官网下载dmg文件打开
+
+homebrew下载
+
+#### pipelines.py
+
+导入头文件：
+
+     from twisted.enterprise import adbapi
+     import MySQLdb
+     from MySQLdb import cursors
+     from scrapy import log
+
+类方法
+    
+    class PrincesmallSQLPipeline(object):
+
+    def __init__(self):
+        self.dbpool = adbapi.ConnectionPool("MySQLdb",
+
+                                            host = "localhost",
+                                            db = "new_schema_prince",
+                                            user = "root",
+                                            passwd = "princesmall",
+                                            cursorclass = MySQLdb.cursors.DictCursor,
+                                            charset = "utf8",
+                                            use_unicode =True
+                                            )
+    def process_item(self,item,spider):
+
+        query = self.dbpool.runInteraction(self._conditional_insert,item)
+        query.addErrback(self.handle_error)
+        return item
+    def _conditional_insert(self,tb,item):
+        prince_title = item['title']
+        prince_link = item['link']
+        prince_time = item['time']
+        # print prince_link, prince_title, prince_time, '--------'
+
+        # 删除所有数据
+        # tb.execute("DELETE FROM TABLE_NAME ")
+
+        # 插入数据，prince_link[0]取出list列表中的数据
+        tb.execute("INSERT INTO  TABLE_NAME (Prince_Title, Prince_Link, Prince_Time) VALUES ('%s', '%s', '%s')" % (prince_title[0], prince_link[0], prince_time[0]))
+
+        log.msg("item data in :%s" % item, level=log.DEBUG)
+    def handle_error(self,e):
+        log.err(e)
+
